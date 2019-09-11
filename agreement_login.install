@@ -1,6 +1,10 @@
 <?php
 
-function agreement_login_update_6001()
+function agreement_login_enable()
+{
+    drupal_install_schema('agreement_login');
+}
+function agreement_login_schema()
 {
     $schema['agreement_login'] = array(
         'description' => t('The base table for agree_login.'),
@@ -26,7 +30,6 @@ function agreement_login_update_6001()
         'primary key' => array('id'),
     );
 
-    $ret = array();
-    db_create_table($ret, 'agreement_login', $schema['agreement_login']);  // THIS IS SAFE BECAUSE $schema IS EXPLICIT
-    return $ret;
+
+    return $schema;
 }
