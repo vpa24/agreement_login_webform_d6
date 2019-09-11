@@ -1,0 +1,40 @@
+<?php
+
+function agreement_login_user($op, &$edit, &$account, $category = NULL)
+{
+    if ($op == 'login') {
+        global $user;
+        if (isset($_GET['destination'])) {
+            unset($_GET['destination']);
+            unset($_REQUEST['destination']);
+        }
+        $expried_date = db_fetch_object(db_query("SELECT * FROM {agreement_login} WHERE uid = $user->uid"))->expired_date;
+
+        if ($expried_date === false || time() > $expried_date) {
+            drupal_goto('/node/2'); //Agreement page
+        } else {
+            drupal_goto('/node/1'); //welcome page.
+        }
+    }
+}
+
+function agreement_login_form_alter(&$form, &$form_state, $form_id)
+{
+    if ($form_id == 'webform_client_form_2') { //webform id
+        $form['#submit'][] = 'myform_form_submit';
+    }
+}
+
+function myform_form_submit($form, &$form_state)
+{
+    global $user;
+    $nextYear =  strtotime("next year");
+    $r = db_query("SELECT * FROM {agreement_login} WHERE uid = $user->uid");
+    if ($r->num_rows == 0) { //first login
+        db_query("INSERT INTO {agreement_login} (uid, expired_date)  VALUES (%d, '%d')", $user->uid, $nextYear);
+    } else { // after one year update to next year
+        db_query("UPDATE {agreement_login} SET expired_date= $nextYear WHERE uid= $user->uid");
+    }
+    drupal_set_message(t('The form has been submitted.'));
+    drupal_goto('/node/1'); //welcome page.
+}

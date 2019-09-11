@@ -1,0 +1,32 @@
+<?php
+
+function agreement_login_update_6001()
+{
+    $schema['agreement_login'] = array(
+        'description' => t('The base table for agree_login.'),
+        'fields' => array(
+            'id' => array(
+                'type' => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE
+            ),
+            'uid' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+                'default' => 0
+            ),
+            'expired_date' => array(
+                'type' => 'int',
+                'length' => 20,
+                'not null' => TRUE,
+                'default' => '0'
+            ),
+        ),
+        'primary key' => array('id'),
+    );
+
+    $ret = array();
+    db_create_table($ret, 'agreement_login', $schema['agreement_login']);  // THIS IS SAFE BECAUSE $schema IS EXPLICIT
+    return $ret;
+}
